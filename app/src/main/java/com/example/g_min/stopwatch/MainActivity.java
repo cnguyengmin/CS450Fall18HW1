@@ -1,6 +1,10 @@
 package com.example.g_min.stopwatch;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
     private Timer time=null;
     private Counter ctr = null;
 
+    private AudioAttributes aa= null;
+    private SoundPool soundPool=null;
+    private int bloopSound =0;
+    private int tick = 0;
 
 
     @Override
@@ -37,9 +45,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (startBttn.getText().equals("Start")){
                     startBttn.setText("Reset");
-                    startBttn.setBackgroundColor(Color.RED);
+                    startBttn.setBackgroundColor(Color.rgb(255,140,0));
                     time.scheduleAtFixedRate(ctr, 0,100);
                     stopBttn.setEnabled(true);
+
                 }else{
                     time.cancel();
                     MainActivity.this.time = new Timer();
@@ -53,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     stopBttn.setText("Stop");
                     stopBttn.setBackgroundColor(Color.RED);
                     stopBttn.setEnabled(false);
+
                 }
             }
         });
@@ -65,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     time.cancel();
                     stopBttn.setText("Resume");
                     stopBttn.setBackgroundColor(Color.GREEN);
+
                 }else{
                     stopBttn.setText("Stop");
                     stopBttn.setBackgroundColor(Color.RED);
@@ -77,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     ctr.sec = pre_sec;
                     ctr.mins = pre_mins;
                     time.scheduleAtFixedRate(ctr, 0,100);
+
 
                 }
 
@@ -111,10 +123,30 @@ public class MainActivity extends AppCompatActivity {
 
         if(MainActivity.this.tv_count.getText().equals("00:00.0")){
             this.startBttn.setText("Start");
+            this.stopBttn.setEnabled(false);
         }else{
             this.startBttn.setText("Reset");
+            this.startBttn.setBackgroundColor(Color.rgb(255,140,0));
             this.stopBttn.setText("Resume");
+            this.stopBttn.setBackgroundColor(Color.GREEN);
         }
+
+        this.aa = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).setUsage(AudioAttributes.USAGE_GAME).build();
+
+        this.soundPool=new SoundPool.Builder().setMaxStreams(2).setAudioAttributes(aa).build();
+
+        this.bloopSound = this.soundPool.load(this,R.raw.bloop,1);
+
+        this.tv_count.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                soundPool.play(bloopSound,1f, 1f,1,0,1f);
+                Animator anim = AnimatorInflater.loadAnimator(MainActivity.this,R.animator.counter);
+                anim.setTarget(tv_count);
+                anim.start();
+            }
+        });
+
 
     }
 
