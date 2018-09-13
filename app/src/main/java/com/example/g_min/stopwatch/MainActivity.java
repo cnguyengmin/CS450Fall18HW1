@@ -2,6 +2,7 @@ package com.example.g_min.stopwatch;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
 
         this.tv_count = findViewById(R.id.tv_count);
